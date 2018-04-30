@@ -1,0 +1,92 @@
+:toc:
+
+= Chaos Testing in Kubernetes
+
+This repo shows how to do Chaos Testing with applications deployed in Kubernetes.
+
+This is a follow up from https://github.com/aws-samples/aws-workshop-for-kubernetes/tree/master/03-path-application-development/310-chaos-engineering.
+
+== Create a Kubernetes Cluster
+
+. Install kops
+
+  brew update && brew install kops
+
+. Create an S3 bucket and setup `KOPS_STATE_STORE`:
+
+  aws s3 mb s3://kubernetes-aws-io
+  export KOPS_STATE_STORE=s3://kubernetes-aws-io
+
+. Define an envinronment variable for Availability Zones for the cluster:
+
+  export AWS_AVAILABILITY_ZONES="$(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text | awk -v OFS="," '$1=$1')"
+
+. Create a 3 master and 6 worker cluster:
+
+  kops create cluster \
+    --name=chaos.k8s.local \
+    --master-count=3 \
+    --node-count=6 \
+    --zones=$AWS_AVAILABILITY_ZONES \
+    --yes
+
+. Verify the cluster:
++
+```
+$ kops validate cluster
+Using cluster from kubectl context: chaos.k8s.local
+
+Validating cluster chaos.k8s.local
+
+INSTANCE GROUPS
+NAME			ROLE	MACHINETYPE	MIN	MAX	SUBNETS
+master-us-east-1a	Master	m3.medium	1	1	us-east-1a
+master-us-east-1b	Master	m3.medium	1	1	us-east-1b
+master-us-east-1c	Master	c4.large	1	1	us-east-1c
+nodes			Node	t2.medium	6	6	us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1e,us-east-1f
+
+NODE STATUS
+NAME				ROLE	READY
+ip-172-20-102-194.ec2.internal	master	True
+ip-172-20-110-113.ec2.internal	node	True
+ip-172-20-148-247.ec2.internal	node	True
+ip-172-20-182-151.ec2.internal	node	True
+ip-172-20-216-171.ec2.internal	node	True
+ip-172-20-42-110.ec2.internal	node	True
+ip-172-20-54-242.ec2.internal	master	True
+ip-172-20-78-200.ec2.internal	master	True
+ip-172-20-82-162.ec2.internal	node	True
+
+Your cluster chaos.k8s.local is ready
+```
++
+Masters are spread across different AZ.
++
+. Check the nodes:
++
+	kubectl get nodes
++
+Validate that the nodes are distributed across multiple AZs.
+
+== Deploy the Application
+
+The application is defined at https://github.com/aws-samples/aws-microservices-deploy-options.
+
+. Install the Helm CLI: `brew install kubernetes-helm`
+. Install Helm in Kubernetes cluster: `helm init`
+. Install the Helm chart: `helm install --name myapp charts/myapp`
+. Access the application:
+
+  curl http://$(kubectl get svc/myapp-webapp -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+
+. Later, delete the Helm chart: `helm delete --purge myapp`
+
+== Install Chaos Toolkit
+
+```
+brew install python3
+pip3 install chaostoolkit
+chaos --version
+```
+
+== Install Istio
