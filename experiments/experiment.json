@@ -24,7 +24,7 @@
                     "module": "chaosk8s.pod.probes",
                     "func": "pods_in_phase",
                     "arguments": {
-                        "label_selector": "app=webapp-pod",
+                        "label_selector": "app=myapp-webapp",
                         "phase": "Running",
                         "ns": "default"
                     }
@@ -51,7 +51,7 @@
                 "module": "chaosk8s.pod.actions",
                 "func": "terminate_pods",
                 "arguments": {
-                    "label_selector": "app=greeter-pod",
+                    "label_selector": "app=myapp-greeting",
                     "ns": "default"
                 }
             }
@@ -64,7 +64,7 @@
                 "module": "chaosk8s.pod.probes",
                 "func": "read_pod_logs",
                 "arguments": {
-                    "label_selector": "app=webapp-pod",
+                    "label_selector": "app=myapp-webapp",
                     "last": "20s",
                     "ns": "default"
                 }
