@@ -30,7 +30,7 @@ This is a follow up from https://github.com/aws-samples/aws-workshop-for-kuberne
     --zones=$AWS_AVAILABILITY_ZONES \
     --yes
 
-. Verify the cluster:
+. Verify the cluster and check that the masters are spread across multiple AZs.
 +
 ```
 $ kops validate cluster
@@ -60,13 +60,9 @@ ip-172-20-82-162.ec2.internal	node	True
 Your cluster chaos.k8s.local is ready
 ```
 +
-Masters are spread across different AZ.
-+
-. Check the nodes:
-+
-	kubectl get nodes
-+
-Validate that the nodes are distributed across multiple AZs.
+. Check the nodes are spread across multiple AZs:
+
+	aws ec2 describe-instances --query 'Reservations[].Instances[].Placement.AvailabilityZone'
 
 == Deploy the Application
 
@@ -81,7 +77,9 @@ The application is defined at https://github.com/aws-samples/aws-microservices-d
 
 . Later, delete the Helm chart: `helm delete --purge myapp`
 
-== Install Chaos Toolkit
+== Using Chaos Toolkit
+
+=== Install Chaos Tooklkit
 
 ```
 brew install python3
@@ -89,4 +87,19 @@ pip3 install chaostoolkit
 chaos --version
 ```
 
-== Install Istio
+=== Run Experiment: Kill a Dependent Service
+
+. Populate the `WEBAPP_URL` environment variable with the URL of your cluster's `webapp-service` endpoint:
+
+  export WEBAPP_URL="http://$(kubectl get svc/myapp-webapp -o jsonpath={.status.loadBalancer.ingress[0].hostname})/"
+
+. Run the experiment:
+
+	chaos run experiments/experiment.json
+
+The output of the `chaos run` command shows that the experiment was run _but_ there is a weakness in the system. When the `myapp-greeting` service is killed the `myapp-webapp` endpoint returns a response took greater than 3 seconds allowed. This is out of bounds of the tolerance for the system to be observed as still in steady-state.
+
+=== Fix Experiment: Add a Circuit Breaker
+
+How do we define a circuit-breaker?
+
