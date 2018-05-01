@@ -119,9 +119,15 @@ How do we define a circuit-breaker?
 
 === Experiment: Kill Nodes in two AZ
 
-=== Experiment: Kill Masters in an AZ
+=== Experiment: Kill Masters in one AZ
 
 === Experiment: Kill All Masters
+
+=== Cleanup
+
+Delete the Helm chart:
+
+	helm delete --purge myapp
 
 == Istio
 
