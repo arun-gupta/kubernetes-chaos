@@ -60,7 +60,7 @@ ip-172-20-82-162.ec2.internal	node	True
 Your cluster chaos.k8s.local is ready
 ```
 +
-. Check the nodes are spread across multiple AZs:
+. Check that the nodes are spread across multiple AZs:
 
 	aws ec2 describe-instances --query 'Reservations[].Instances[].Placement.AvailabilityZone'
 
@@ -138,12 +138,26 @@ How do we define a circuit-breaker?
 
 	How to inject Istio for an application deployed using Helm chart?
 
-
 === Experiment: Kill a Dependent Service
 
+==== Setup
+
+==== Run
+
+==== Diagnosis
+
+==== Fix
 
 == Gremlin
 
 === Install Gremlin
 
 === Experiment: Kill a Dependent Service
+
+==== Setup
+
+==== Run
+
+==== Diagnosis
+
+==== Fix
