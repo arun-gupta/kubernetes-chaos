@@ -77,7 +77,7 @@ The application is defined at https://github.com/aws-samples/aws-microservices-d
 
 . Later, delete the Helm chart: `helm delete --purge myapp`
 
-== Using Chaos Toolkit
+== Chaos Toolkit
 
 === Install Chaos Tooklkit
 
@@ -87,23 +87,43 @@ pip3 install chaostoolkit
 chaos --version
 ```
 
-=== Run Experiment: Kill a Dependent Service
+=== Experiment: Kill a Dependent Service (Greeting)
+
+==== Setup
 
 . Populate the `WEBAPP_URL` environment variable with the URL of your cluster's `webapp-service` endpoint:
 
   export WEBAPP_URL="http://$(kubectl get svc/myapp-webapp -o jsonpath={.status.loadBalancer.ingress[0].hostname})/"
 
+==== Run
+
 . Run the experiment:
 
-	chaos run experiments/experiment.json
+	chaos run experiments/greeting-kill.json
 
-The output of the `chaos run` command shows that the experiment was run _but_ there is a weakness in the system. When the `myapp-greeting` service is killed the `myapp-webapp` endpoint returns a response took greater than 3 seconds allowed. This is out of bounds of the tolerance for the system to be observed as still in steady-state.
+==== Diagnosis
 
-=== Fix Experiment: Add a Circuit Breaker
+The output of the `chaos run` command shows that the experiment was run _but_ there is a weakness in the system. When the `myapp-greeting` service is killed, the `myapp-webapp` endpoint returns a response took greater than 3 seconds allowed. This is out of bounds of the tolerance for the system to be observed as still in steady-state.
+
+TODO: How do I start the service back during `rollback`?
+
+==== Fix
 
 How do we define a circuit-breaker?
 
-== Using Istio
+=== Experiement: Kill a Dependent Service (Name)
+
+=== Experiment: Send 10 concurrent requests with different Name
+
+=== Experiment: Kill Nodes in one AZ
+
+=== Experiment: Kill Nodes in two AZ
+
+=== Experiment: Kill Masters in an AZ
+
+=== Experiment: Kill All Masters
+
+== Istio
 
 === Install Istio
 
@@ -119,5 +139,11 @@ How do we define a circuit-breaker?
 	How to inject Istio for an application deployed using Helm chart?
 
 
+=== Experiment: Kill a Dependent Service
 
 
+== Gremlin
+
+=== Install Gremlin
+
+=== Experiment: Kill a Dependent Service
