@@ -68,7 +68,7 @@ Your cluster chaos.k8s.local is ready
 
 The application is defined at https://github.com/aws-samples/aws-microservices-deploy-options.
 
-NOTE: Make sure to install the specified version of Helm. Helm 2.9.0 cannot install charts. https://github.com/kubernetes/helm/issues/2520 has more details.
+NOTE: Make sure to install the specified version of Helm. Helm 2.9.0 is not able install charts. https://github.com/kubernetes/helm/issues/4001 has more details.
 
 . Install the Helm CLI: `brew install kubernetes-helm 2.8.1`
 . Install Helm in Kubernetes cluster: `helm init`
