@@ -70,7 +70,8 @@ The application is defined at https://github.com/aws-samples/aws-microservices-d
 
 NOTE: Make sure to install the specified version of Helm. Helm 2.9.0 is not able install charts. https://github.com/kubernetes/helm/issues/4001 has more details.
 
-. Install the Helm CLI: `brew install kubernetes-helm 2.8.1`
+. Install the Helm CLI: `brew install kubernetes-helm`
+. Switch to the version 2.8.1: `brew switch kubernetes-helm 2.8.1`
 . Install Helm in Kubernetes cluster: `helm init`
 . Create Service Account and provide permissions to deploy the application:
 +
